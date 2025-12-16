@@ -31,7 +31,7 @@ AWS_REGION=$AWS_REGION
 AMI_ID=$AMI_ID
 INSTANCE_TYPE=t2.micro
 KEY_NAME=cluster-key
-SEC_GROUP_NAME=cluster-sg
+SG_NAME=cluster-sg
 
 # Database Credentials
 DB_USER=sbtest
