@@ -53,7 +53,7 @@ def execute_ssh_command(instance, command):
 
     try:
         k = paramiko.RSAKey.from_private_key_file(key_file)
-        ssh.connect(hostname=instance.public_ip_address, username='ec2-user', pkey=k)
+        ssh.connect(hostname=instance.public_ip_address, username='ubuntu', pkey=k)
 
         stdin, stdout, stderr = ssh.exec_command(command)
         exit_status = stdout.channel.recv_exit_status()
@@ -82,8 +82,8 @@ def configure_node(instance, server_id):
         echo 'log_bin = /var/log/mysql/mysql-bin.log' | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
         """
     command = f"""
-    sudo sed -i 's/^bind-address.*/bind-address = 0.0.0.0' /etc/mysql/mysql.conf.d/mysqld.cnf
-    sudo sed -i '/server-id/d' /etc/mysql/mysql.conf.d/mysql.cnf
+    sudo sed -i 's/^bind-address.*/bind-address = 0.0.0.0/' /etc/mysql/mysql.conf.d/mysqld.cnf
+    sudo sed -i '/server-id/d' /etc/mysql/mysql.conf.d/mysqld.cnf
     echo 'server-id = {server_id}' | sudo tee -a /etc/mysql/mysql.conf.d/mysqld.cnf
     {bin_log_config}
     sudo systemctl restart mysql
@@ -105,7 +105,7 @@ def setup_master(manager):
 
     print(" Getting Binary Log Coordinates...")
 
-    status_output = execute_ssh_command(ip, "sudo mysql -e 'SHOW MASTER STATUS\G'")
+    status_output = execute_ssh_command(manager, "sudo mysql -e 'SHOW MASTER STATUS\G'")
 
     if not status_output:
         print("Failed to get master status.")
