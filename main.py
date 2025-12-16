@@ -82,9 +82,9 @@ def prepare_user_data():
             script_content = file.read()
         
         # Replace placeholders with actual values
-        script_content = script_content.replace('{{DB_USER}}', DB_USER)
-        script_content = script_content.replace('{{DB_PASS}}', DB_PASS)
-        script_content = script_content.replace('{{DB_NAME}}', DB_NAME)
+        script_content = script_content.replace('$DB_USER', DB_USER)
+        script_content = script_content.replace('$DB_PASS', DB_PASS)
+        script_content = script_content.replace('$DB_NAME', DB_NAME)
         return script_content
     except Exception as e:
         print(f"Error preparing user data script: {e}")
