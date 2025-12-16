@@ -37,6 +37,10 @@ SG_NAME=cluster-sg
 DB_USER=sbtest
 DB_PASS=sbtest_password
 DB_NAME=sakila
+
+# Replication Credentials
+REP_USER=replica_user
+REP_PASS=replica_password
 EOF
 
 echo ".env file generated successfully."
