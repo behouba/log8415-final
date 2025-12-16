@@ -11,12 +11,12 @@ try:
     AMI_ID = os.getenv("AMI_ID")
     INSTANCE_TYPE = os.getenv("INSTANCE_TYPE", "t2.micro")
     KEY_NAME = os.getenv("KEY_NAME")
-    SECURITY_GROUP_NAME = os.getenv("SECURITY_GROUP_NAME")
+    SG_NAME = os.getenv("SG_NAME")
     DB_USER = os.getenv("DB_USER")
     DB_PASS = os.getenv("DB_PASS")
     DB_NAME = os.getenv("DB_NAME")
 
-    if not all([REGION, AMI_ID, KEY_NAME, SECURITY_GROUP_NAME, DB_USER, DB_PASS, DB_NAME]):
+    if not all([REGION, AMI_ID, KEY_NAME, SG_NAME, DB_USER, DB_PASS, DB_NAME]):
         raise ValueError("One or more required environment variables are missing.")
 except Exception as e:
     print(f"Error loading environment variables: {e}")
@@ -47,16 +47,16 @@ def create_key_pair():
 def create_security_group():
     try:
         # check if security group exists
-        response = ec2_client.describe_security_groups(GroupNames=[SECURITY_GROUP_NAME])
+        response = ec2_client.describe_security_groups(GroupNames=[SG_NAME])
         sg_id = response['SecurityGroups'][0]['GroupId']
-        print(f"Security group '{SECURITY_GROUP_NAME}' already exists with ID '{sg_id}'.")
+        print(f"Security group '{SG_NAME}' already exists with ID '{sg_id}'.")
         return sg_id
     except ec2_client.exceptions.ClientError as e:
         vpc_response = ec2_client.describe_vpcs()
         vpc_id = vpc_response['Vpcs'][0]['VpcId']
 
         sg_response = ec2_client.create_security_group(
-            GroupName=SECURITY_GROUP_NAME,
+            GroupName=SG_NAME,
             Description='Cluster Acccess, SSH, MySQL, ICMP',
             VpcId=vpc_id
         )
@@ -134,4 +134,3 @@ if __name__ == "__main__":
     sg_id = create_security_group()
     user_data_script = prepare_user_data()
     launch_instance(sg_id, user_data_script)
-    
