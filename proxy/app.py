@@ -71,7 +71,7 @@ def strategy_customized():
             best_ip = ip
     return best_ip
 
-@app.route('/query')
+@app.route('/query', methods=['POST'])
 def proxy_query():
     data = request.json
     sql = data.get('query', '').strip()
