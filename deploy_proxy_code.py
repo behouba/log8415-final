@@ -87,8 +87,9 @@ def deploy():
         nohup /home/ubuntu/proxy/venv/bin/python3 /home/ubuntu/proxy/app.py > /home/ubuntu/proxy/proxy.log 2>&1 &
         """
 
-        ssh.exec_command(commands)
-        print("Proxy deployed and started successfully.")
+        stdin, stdout, stderr = ssh.exec_command(commands)
+        stdout.channel.recv_exit_status()  # Wait for command to complete
+        time.sleep(5)  # Give some time for the proxy to start
         
     except Exception as e:
         print(f"Error deploying to proxy instance: {e}")
