@@ -11,7 +11,7 @@ fi
 # Warn that all EC2 instances will be terminated
 
 echo "WARNING: This script will terminate all EC2 instances in region: $AWS_REGION"
-read -p "Are you sure you want to continue? (yes/no): " -n 1 -r
+read -p "Are you sure you want to proceed? (y/N): " REPLY
 echo    # move to a new line
 if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     echo "Operation cancelled."
