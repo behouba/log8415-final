@@ -40,7 +40,7 @@ def launch_proxy():
     chown ubuntu:ubuntu /home/ubuntu/proxy
     """
 
-    print("Launching proxy {PROXY_TYPE} instance...")
+    print(f"Launching proxy {PROXY_TYPE} instance...")
 
     instances = ec2.create_instances(
         ImageId=AMI_ID,
