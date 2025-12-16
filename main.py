@@ -57,7 +57,7 @@ def create_security_group():
 
         sg_response = ec2_client.create_security_group(
             GroupName=SG_NAME,
-            Description='Cluster Acccess, SSH, MySQL, ICMP',
+            Description='Cluster Acccess, SSH, MySQL, ICMP, Proxy',
             VpcId=vpc_id
         )
         sg_id = sg_response['GroupId']
@@ -66,7 +66,8 @@ def create_security_group():
         permissions = [
             { 'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] }, # SSH
             { 'IpProtocol': 'tcp', 'FromPort': 3306, 'ToPort': 3306, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] }, # MySQL
-            { 'IpProtocol': 'icmp', 'FromPort': -1, 'ToPort': -1, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] } # ICMP
+            { 'IpProtocol': 'icmp', 'FromPort': -1, 'ToPort': -1, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] }, # ICMP
+            { 'IpProtocol': 'tcp', 'FromPort': 5000, 'ToPort': 5000, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] } # Proxy
         ]
 
         ec2_client.authorize_security_group_ingress(
