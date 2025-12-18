@@ -22,9 +22,12 @@ unzip sakila-db.zip
 sudo mysql -e "SOURCE sakila-db/sakila-schema.sql;"
 sudo mysql -e "SOURCE sakila-db/sakila-data.sql;"
 
-# Create user for Sysbench uusing the credentials from .env file
+# Create user for Sysbench using the credentials from .env file
+# Allow connections from any host (%) so the proxy can connect
 sudo mysql -e "CREATE USER '$DB_USER'@'localhost' IDENTIFIED BY '$DB_PASS';"
+sudo mysql -e "CREATE USER '$DB_USER'@'%' IDENTIFIED BY '$DB_PASS';"
 sudo mysql -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'localhost';"
+sudo mysql -e "GRANT ALL PRIVILEGES ON $DB_NAME.* TO '$DB_USER'@'%';"
 sudo mysql -e "FLUSH PRIVILEGES;"
 
 # Run Sysbenh

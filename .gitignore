@@ -1,1 +1,3 @@
 venv/
+*.perm
+proxy_ip.txt
