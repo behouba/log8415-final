@@ -89,7 +89,12 @@ def deploy():
 
         stdin, stdout, stderr = ssh.exec_command(commands)
         stdout.channel.recv_exit_status()  # Wait for command to complete
+        err = stderr.read().decode().strip()
+        if err:
+            print(f"Error during proxy setup: {err}")
+            return
         time.sleep(5)  # Give some time for the proxy to start
+        print("Proxy deployed and started successfully.")
         
     except Exception as e:
         print(f"Error deploying to proxy instance: {e}")
