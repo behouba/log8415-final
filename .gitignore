@@ -3,3 +3,4 @@ venv/
 proxy_ip.txt
 *_ip.txt
 .env
+benchmark_results.json
