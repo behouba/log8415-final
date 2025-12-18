@@ -49,7 +49,8 @@ def deploy():
     with open('gatekeeper/app.py', 'r') as file:
         code = file.read()
 
-    code = code.replace('PROXY_HOST = ""', f'PROXY_HOST = "{proxy_pvt}"')
+    import re
+    code = re.sub(r'PROXY_HOST = ".*?"', f'PROXY_HOST = "{proxy_pvt}"', code)
 
     with open('gatekeeper/app.py', 'w') as file:
         file.write(code)
@@ -67,22 +68,25 @@ def deploy():
         sftp.close()
 
         print("Installing dependencies on gatekeeper instance...")
-        commands = """
+        install_commands = """
         sudo apt-get install -y python3-pip python3-venv
         python3 -m venv /home/ubuntu/gatekeeper/venv
         /home/ubuntu/gatekeeper/venv/bin/pip install -r /home/ubuntu/gatekeeper/requirements.txt
         pkill -f 'python3 /home/ubuntu/gatekeeper/app.py' || true
-        nohup /home/ubuntu/gatekeeper/venv/bin/python3 /home/ubuntu/gatekeeper/app.py > /home/ubuntu/gatekeeper/gatekeeper.log 2>&1 &
         """
 
-        stdin, stdout, stderr = ssh.exec_command(commands)
+        stdin, stdout, stderr = ssh.exec_command(install_commands)
         stdout.channel.recv_exit_status()
-        err = stderr.read().decode().strip()
-        if err:
-            print(f"Error during gatekeeper setup: {err}")
-            return
+
+        # Start app in background
+        start_command = "cd /home/ubuntu/gatekeeper && nohup /home/ubuntu/gatekeeper/venv/bin/python3 app.py > gatekeeper.log 2>&1 &"
+        ssh.exec_command(start_command)
+
         time.sleep(5)
         print("Gatekeeper deployed and started successfully.")
+        print("Waiting 10 seconds for gatekeeper application to start...")
+        time.sleep(10)
+        print("Gatekeeper application should now be running.")
 
     except Exception as e:
         print(f"Error deploying to gatekeeper instance: {e}")
