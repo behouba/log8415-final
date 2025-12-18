@@ -1,3 +1,5 @@
 venv/
-*.perm
+*.pem
 proxy_ip.txt
+*_ip.txt
+.env
