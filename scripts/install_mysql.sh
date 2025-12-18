@@ -14,6 +14,16 @@ sudo apt-get install mysql-server unzip sysbench -y
 sudo systemctl start mysql
 sudo systemctl enable mysql
 
+# Wait for MySQL to be ready
+for i in {1..30}; do
+    if sudo mysql -e "SELECT 1" > /dev/null 2>&1; then
+        echo "MySQL is ready"
+        break
+    fi
+    echo "Waiting for MySQL to start... ($i/30)"
+    sleep 2
+done
+
 # Download and install Sakila database
 wget https://downloads.mysql.com/docs/sakila-db.zip
 unzip sakila-db.zip

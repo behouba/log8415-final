@@ -71,6 +71,10 @@ def launch_proxy():
     with open("proxy_ip.txt", "w") as f:
         f.write(instance.public_ip_address)
 
+    print("Waiting 90 seconds for proxy instance to be ready...")
+    time.sleep(90)
+    print("Proxy instance should now be ready.")
+
     return instance
 
 if __name__ == "__main__":

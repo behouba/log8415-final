@@ -127,6 +127,9 @@ def launch_instance(sg_id, user_data_script):
         instance.create_tags(Tags=[{'Key': 'Name', 'Value': name}])
         print(f"Launched instance '{name}' with ID '{instance.id}' and public IP '{instance.public_ip_address}'.")
     print("All instances launched successfully.")
+    print("Waiting 60 seconds for instances to be ready...")
+    time.sleep(60)
+    print("Instances should now be ready.")
     return instances
 
 

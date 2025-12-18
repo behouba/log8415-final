@@ -1,6 +1,7 @@
 import boto3
 import os
 import sys
+import time
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -84,6 +85,10 @@ def launch_gatekeeper():
 
     with open("gatekeeper_ip.txt", "w") as f:
         f.write(instance.public_ip_address)
+
+    print("Waiting 90 seconds for gatekeeper instance to be ready...")
+    time.sleep(90)
+    print("Gatekeeper instance should now be ready.")
 
     return instance
 
