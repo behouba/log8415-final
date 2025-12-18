@@ -12,8 +12,11 @@ REGION = os.getenv("AWS_REGION")
 KEY_NAME = os.getenv("KEY_NAME")
 REP_USER = os.getenv("REP_USER")
 REP_PASS = os.getenv("REP_PASS")
+DB_USER = os.getenv("DB_USER")
+DB_PASS = os.getenv("DB_PASS")
+DB_NAME = os.getenv("DB_NAME")
 
-if not all([REGION, KEY_NAME, REP_USER, REP_PASS]):
+if not all([REGION, KEY_NAME, REP_USER, REP_PASS, DB_USER, DB_PASS, DB_NAME]):
     print("One or more required environment variables are missing.")
     sys.exit(1)
 
@@ -98,6 +101,8 @@ def setup_master(manager):
     create_user_cmd = f"""
     sudo mysql -e "CREATE USER IF NOT EXISTS '{REP_USER}'@'%' IDENTIFIED WITH mysql_native_password BY '{REP_PASS}';"
     sudo mysql -e "GRANT REPLICATION SLAVE ON *.* TO '{REP_USER}'@'%';"
+    sudo mysql -e "CREATE USER IF NOT EXISTS '{DB_USER}'@'%' IDENTIFIED BY '{DB_PASS}';"
+    sudo mysql -e "GRANT ALL PRIVILEGES ON {DB_NAME}.* TO '{DB_USER}'@'%';"
     sudo mysql -e "FLUSH PRIVILEGES;"
     """
 
@@ -105,7 +110,7 @@ def setup_master(manager):
 
     print(" Getting Binary Log Coordinates...")
 
-    status_output = execute_ssh_command(manager, "sudo mysql -e 'SHOW MASTER STATUS\G'")
+    status_output = execute_ssh_command(manager, "sudo mysql -e 'SHOW MASTER STATUS\\G'")
 
     if not status_output:
         print("Failed to get master status.")
@@ -114,7 +119,7 @@ def setup_master(manager):
     file_name = None
     position = None
 
-    lines = status_output.split('\n')
+    lines = status_output.split('\\n')
     for line in lines:
         if 'File:' in line:
             file_name = line.split(':')[1].strip()
@@ -134,6 +139,15 @@ def setup_slave(worker, master_ip, log_file, log_pos):
     ip = worker.public_ip_address
     print(f"Setting up slave on {worker.id} with IP {ip}...")
 
+    # Create users on worker for proxy access
+    create_user_cmd = f"""
+    sudo mysql -e "CREATE USER IF NOT EXISTS '{DB_USER}'@'%' IDENTIFIED BY '{DB_PASS}';"
+    sudo mysql -e "GRANT ALL PRIVILEGES ON {DB_NAME}.* TO '{DB_USER}'@'%';"
+    sudo mysql -e "FLUSH PRIVILEGES;"
+    """
+    execute_ssh_command(worker, create_user_cmd)
+
+    # Configure replication
     change_master_cmd = f"""
     sudo mysql -e "CHANGE MASTER TO MASTER_HOST='{master_ip}', MASTER_USER='{REP_USER}', MASTER_PASSWORD='{REP_PASS}', MASTER_LOG_FILE='{log_file}', MASTER_LOG_POS={log_pos};"
     sudo mysql -e "START SLAVE;"
@@ -150,7 +164,7 @@ def verify_replication(instances):
     for instance in instances:
         ip = instance.public_ip_address
 
-        cmd = 'sudo mysql -e "SHOW SLAVE STATUS\G" | grep "Running: Yes"'
+        cmd = 'sudo mysql -e "SHOW SLAVE STATUS\\G" | grep "Running: Yes"'
         res = execute_ssh_command(instance, cmd)
 
         if res and "IO_Running: Yes" in res and "SQL_Running: Yes" in res:
@@ -158,8 +172,8 @@ def verify_replication(instances):
         else:
             print(f" Instance {instance.id} replication is NOT running.")
             ok = False
-            debug = execute_ssh_command(instance, 'sudo mysql -e "SHOW REPLICA STATUS\G"')
-            print(f" Debug info:\n{debug}")
+            debug = execute_ssh_command(instance, 'sudo mysql -e "SHOW REPLICA STATUS\\G"')
+            print(f" Debug info:\\n{debug}")
         
     return ok
 
