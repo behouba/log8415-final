@@ -4,8 +4,11 @@ import re
 
 app = Flask(__name__)
 
-PROXY_HOST = "172.31.41.82"
+PROXY_HOST = "172.31.25.160"
 PROXY_PORT = 5000
+
+# API key for authentication (injected during deployment)
+API_KEY = "PLACEHOLDER_API_KEY"
 
 BLOCKED_PATTERNS = [
     r'\bDROP\s+TABLE\b',
@@ -23,6 +26,11 @@ def is_query_safe(query):
 
 @app.route('/query', methods=['POST'])
 def gateway():
+    # Check API key authentication
+    api_key = request.headers.get('X-API-Key')
+    if api_key != API_KEY:
+        return jsonify({"error": "Unauthorized - Invalid or missing API key"}), 401
+
     data = request.json
     query = data.get('query', '').strip()
     strategy = data.get('strategy', 'direct_hit')

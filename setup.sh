@@ -24,6 +24,10 @@ fi
 
 echo "Found AMI ID: $AMI_ID"
 
+# Generate random API key
+API_KEY=$(openssl rand -hex 24)
+echo "Generated API Key: $API_KEY"
+
 # Generate .env file
 cat <<EOF > .env
 # AWS Configuration (Generated automatically)
@@ -41,6 +45,9 @@ DB_NAME=sakila
 # Replication Credentials
 REP_USER=replica_user
 REP_PASS=replica_password
+
+# Gatekeeper API Key (auto-generated)
+API_KEY=$API_KEY
 EOF
 
 echo ".env file generated successfully."

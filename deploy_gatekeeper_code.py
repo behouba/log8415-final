@@ -9,6 +9,7 @@ load_dotenv()
 
 AWS_REGION = os.getenv("AWS_REGION")
 KEY_NAME = os.getenv("KEY_NAME")
+API_KEY = os.getenv("API_KEY")
 
 ec2 = boto3.resource('ec2', region_name=AWS_REGION)
 
@@ -51,6 +52,7 @@ def deploy():
 
     import re
     code = re.sub(r'PROXY_HOST = ".*?"', f'PROXY_HOST = "{proxy_pvt}"', code)
+    code = re.sub(r'API_KEY = ".*?"', f'API_KEY = "{API_KEY}"', code)
 
     with open('gatekeeper/app.py', 'w') as file:
         file.write(code)
