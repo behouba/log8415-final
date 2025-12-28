@@ -119,7 +119,7 @@ def setup_master(manager):
     file_name = None
     position = None
 
-    lines = status_output.split('\\n')
+    lines = status_output.split('\n')
     for line in lines:
         if 'File:' in line:
             file_name = line.split(':')[1].strip()
