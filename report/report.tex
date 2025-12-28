@@ -56,3 +56,37 @@ Design patterns offer proven solutions to common challenges in computer science.
 \end{itemize}
 
 The implementation is built with Amazon EC2 instances with MySQL databases.
+
+\section{System Architecture}
+
+
+\subsection{Architecture Overview}
+
+The system architecture consists of five EC2 instances organized in a layered-like design:
+
+  \begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/system_architecture.png}
+  \caption{System Architecture: Request flow from user through Gatekeeper and Proxy to MySQL Cluster}
+  \label{fig:architecture}
+  \end{figure}
+
+\subsection{Components}
+
+The table below presents the type of ec2 instances, their specs, roles, and network accessibility.
+\begin{table}[H]
+\centering
+\caption{EC2 Instances}
+\label{tab:instances}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Component} & \textbf{Instance Type} & \textbf{Role} & \textbf{Access} \\
+\midrule
+Gatekeeper & t2.large & Authentication, Validation & Public internet \\
+Proxy & t2.large & Routing, Load Balancing & Internal \\
+Manager & t2.micro & MySQL Master (Writes) & Internal \\
+Worker 1 & t2.micro & MySQL Replica (Reads) & Internal \\
+Worker 2 & t2.micro & MySQL Replica (Reads) & Internal \\
+\bottomrule
+\end{tabular}
+\end{table}
