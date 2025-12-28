@@ -1,0 +1,58 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows, positioning}
+
+% Code listing style
+\lstset{
+    basicstyle=\ttfamily\small,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{red},
+    backgroundcolor=\color{gray!5},
+    showstringspaces=false,
+}
+
+\title{\textbf{Final Assignment: Cloud Design Patterns} \\
+\textbf{Implementing a MySQL Cluster with Proxy and Gatekeeper Patterns} \\
+\large LOG8415E - Advanced Concepts of Cloud Computing}
+\author{Kouamé Behouba Manassé
+    \\
+    \emph{Dep. of Computer Engineering and Software Engineering Department, Polytechnique Montréal}
+    \\
+    \emph{behouba-manasse.kouame@polymtl.ca}
+    }
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\newpage
+
+
+\section{Introduction}
+
+Design patterns offer proven solutions to common challenges in computer science. In cloud computing, they provide solutions to common challenges in distributed systems. In this project, we have implemented two patterns for database access:
+
+\begin{itemize}
+    \item \textbf{Proxy Pattern:} Separates read and write operations to improve scalability by distributing read load across worker nodes while ensuring write consistency through a single manager node.
+    \item \textbf{Gatekeeper Pattern:} Provides a security layer that validates incoming requests before forwarding them to internal components.
+\end{itemize}
+
+The implementation is built with Amazon EC2 instances with MySQL databases.
