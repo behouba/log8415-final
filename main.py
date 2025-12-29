@@ -62,12 +62,12 @@ def create_security_group():
         )
         sg_id = sg_response['GroupId']
 
-        # Define rules
+        # Define rules - MySQL restricted to internal cluster only
         permissions = [
             { 'IpProtocol': 'tcp', 'FromPort': 22, 'ToPort': 22, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] }, # SSH
-            { 'IpProtocol': 'tcp', 'FromPort': 3306, 'ToPort': 3306, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] }, # MySQL
+            { 'IpProtocol': 'tcp', 'FromPort': 3306, 'ToPort': 3306, 'UserIdGroupPairs': [{'GroupId': sg_id}] }, # MySQL (internal only)
             { 'IpProtocol': 'icmp', 'FromPort': -1, 'ToPort': -1, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] }, # ICMP
-            { 'IpProtocol': 'tcp', 'FromPort': 5000, 'ToPort': 5000, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] } # Proxy
+            { 'IpProtocol': 'tcp', 'FromPort': 5000, 'ToPort': 5000, 'IpRanges': [{'CidrIp': '0.0.0.0/0'}] } # Proxy (secured later)
         ]
 
         ec2_client.authorize_security_group_ingress(
