@@ -26,12 +26,9 @@
     showstringspaces=false,
 }
 
-\title{\textbf{Final Assignment: Cloud Design Patterns} \\
-\textbf{Implementing a MySQL Cluster with Proxy and Gatekeeper Patterns} \\
+\title{\textbf{Cloud Design Patterns: Implementing a DB Cluster} \\
 \large LOG8415E - Advanced Concepts of Cloud Computing}
 \author{Kouamé Behouba Manassé
-    \\
-    \emph{Dep. of Computer Engineering and Software Engineering Department, Polytechnique Montréal}
     \\
     \emph{behouba-manasse.kouame@polymtl.ca}
     }
@@ -41,9 +38,6 @@
 \begin{document}
 
 \maketitle
-
-\tableofcontents
-\newpage
 
 
 \section{Introduction}
@@ -55,14 +49,14 @@ Design patterns offer proven solutions to common challenges in computer science.
     \item \textbf{Gatekeeper Pattern:} Provides a security layer that validates incoming requests before forwarding them to internal components.
 \end{itemize}
 
-The implementation is built with Amazon EC2 instances with MySQL databases.
+The source code is available on GitHub\footnote{\url{https://github.com/behouba/log8415-final}} and a demo video demonstrating the system in action can be found here\footnote{\url{https://polymtlca-my.sharepoint.com/:f:/g/personal/behouba-manasse_kouame_etud_polymtl_ca/IgDn0U24kJZOTbQEgxaErNoAATlc-XEKPYCOkx-EdYTM7qs?e=khTX9u}}.
 
 \section{System Architecture}
 
 
 \subsection{Architecture Overview}
 
-The system architecture consists of five EC2 instances organized in a layered-like design:
+The system architecture consists of five EC2 instances organized in a layered design. External requests first hit the Gatekeeper, which authenticates users and validates queries before forwarding them to the Proxy. The Proxy then routes requests to the appropriate MySQL node based on the selected strategy, with writes going to the Manager and reads distributed across Workers.
 
   \begin{figure}[H]
   \centering
@@ -90,3 +84,298 @@ Worker 2 & t2.micro & MySQL Replica (Reads) & Internal \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\section{MySQL Standalone Setup and Sysbench Benchmarking}
+
+\subsection{MySQL Installation}
+
+Each of the three MySQL instances is provisioned using EC2 user-data scripts that automatically perform the following actions:
+
+\begin{enumerate}
+    \item Install MySQL Server 8.0 on Ubuntu 24.04 LTS
+    \item Download and import the Sakila sample database
+    \item Create database users with appropriate privileges
+    \item Configure MySQL for remote access connections
+\end{enumerate}
+
+These step actions are handled by the bash script inside sscripts/install\_mysql.sh.
+
+\subsection{Sysbench Benchmarking}
+
+Sysbench is used to verify the MySQL installation and measure baseline performance. The OLTP read-only workload tests database query performance.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/sysbench_commands.png}
+\caption{Sysbench Commands}
+\label{fig:sysbench}
+\end{figure}
+
+\subsection{Sysbench Results}
+
+The sysbench benchmark validates that MySQL is correctly installed and performing as expected on each instance:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/sysbench_results.png}
+\caption{Sysbench Results (Manager instance)}
+\label{fig:sysbench-results}
+\end{figure}
+
+The results confirm that the MySQL instances are operational and ready to handle the expected workload.
+
+
+\section{MySQL Replication Setup}
+
+\subsection{Replication Architecture}
+
+MySQL replication is configured in a master-slave pattern where:
+\begin{itemize}
+    \item The \textbf{Manager} node acts as the source (master)
+    \item The \textbf{Worker} nodes act as replicas (slaves)
+    \item Changes on the Manager are automatically propagated to Workers
+\end{itemize}
+
+\subsection{Replication Configuration}
+
+The replication setup involves configuring each node with appropriate settings:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/replica_setup_master.png}
+\caption{Manager (Master) Configuration}
+\label{fig:replica-master}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/replica_setup_slaves.png}
+\caption{Worker (Slave) Configuration}
+\label{fig:replica-slaves}
+\end{figure}
+
+\subsection{Replication Verification}
+
+We verify the replication status by checking that both IO and SQL threads are running:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/verify_replication_status.png}
+\caption{Verify Replication Status}
+\label{fig:verify-replication}
+\end{figure}
+
+
+\section{Proxy Pattern Implementation}
+
+\subsection{Pattern Description}
+
+The Proxy pattern improves scalability by separating read and write operations:
+
+\begin{itemize}
+    \item \textbf{Write Operations} (INSERT, UPDATE, DELETE): Are sent exclusively to the Manager node to maintain data consistency
+    \item \textbf{Read Operations} (SELECT): Distributed to Worker nodes to balance the load
+\end{itemize}
+
+\subsection{Routing Strategies}
+
+The Proxy implements three routing strategies for read operations:
+
+\subsubsection{Direct Hit Strategy}
+All queries (both read and write) are sent directly to the Manager node. This serves as a baseline for comparison.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/strategy_direct_hit.png}
+\caption{Direct Hit Strategy}
+\label{fig:strategy-direct}
+\end{figure}
+
+\subsubsection{Random Strategy}
+Read queries are randomly distributed among available Worker nodes, providing simple load balancing.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/strategy_random.png}
+\caption{Random Strategy}
+\label{fig:strategy-random}
+\end{figure}
+
+\subsubsection{Customized Strategy}
+Read queries are sent to the Worker with the lowest network latency, measured using ICMP ping.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/strategy_customized.png}
+\caption{Customized (Ping-Based) Strategy}
+\label{fig:strategy-customized}
+\end{figure}
+
+\subsection{Query Classification}
+
+The Proxy determines query type by examining the SQL statement:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/query_classification.png}
+\caption{Query Classification Logic}
+\label{fig:query-classification}
+\end{figure}
+
+\section{Gatekeeper Pattern Implementation}
+
+
+\subsection{Pattern Description}
+
+The Gatekeeper pattern provides a security layer that:
+\begin{itemize}
+    \item Acts as the only internet-facing component
+    \item Validates authentication credentials
+    \item Sanitizes and validates incoming queries
+    \item Forwards valid requests to the Trusted Host (Proxy)
+\end{itemize}
+
+\subsection{Authentication}
+
+All requests must include a valid API key in the HTTP header. The API key is automatically generated during setup.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/key_authenticatioin.png}
+\caption{API Key Authentication}
+\label{fig:api-auth}
+\end{figure}
+
+\subsection{Query Validation}
+
+The Gatekeeper blocks potentially dangerous SQL operations:
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/query_validation.png}
+\caption{Query Validation}
+\label{fig:query-validation}
+\end{figure}
+
+\subsection{Request Flow}
+
+\begin{enumerate}
+    \item User sends request to Gatekeeper with API key
+    \item Gatekeeper validates API key (401 if invalid)
+    \item Gatekeeper validates query safety (403 if dangerous)
+    \item Valid requests are forwarded to Proxy
+    \item Proxy routes to appropriate MySQL node
+    \item Response returns through the same path
+\end{enumerate}
+
+%==============================================================================
+\section{Security Implementation}
+%==============================================================================
+
+\subsection{Network Security}
+
+The implementation follows security best practices:
+
+\begin{table}[H]
+\centering
+\caption{Security Group Rules}
+\label{tab:security}
+\begin{tabular}{@{}llll@{}}
+\toprule
+\textbf{Port} & \textbf{Source} & \textbf{Component} & \textbf{Purpose} \\
+\midrule
+22 & 0.0.0.0/0 & All & SSH access \\
+5000 & 0.0.0.0/0 & Gatekeeper & API endpoint \\
+5000 & Gatekeeper SG & Proxy & Internal communication \\
+3306 & Cluster SG & MySQL nodes & Database access \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Trusted Host Protection}
+
+The Proxy (Trusted Host) is protected by:
+\begin{itemize}
+    \item Removing public access to port 5000
+    \item Only allowing connections from Gatekeeper security group
+    \item No direct internet exposure
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.85\textwidth]{figures/securing_proxy.png}
+\caption{Securing the Proxy}
+\label{fig:securing-proxy}
+\end{figure}
+
+%==============================================================================
+\section{Cluster Benchmarking}
+%==============================================================================
+
+\subsection{Benchmark Methodology}
+
+The benchmarking script sends 1,000 read requests and 1,000 write requests for each of the three routing strategies, totaling 6,000 requests. The benchmark uses:
+
+\begin{itemize}
+    \item \textbf{Read Query:} \texttt{SELECT * FROM actor LIMIT 1}
+    \item \textbf{Write Query:} \texttt{UPDATE actor SET last\_update = NOW() WHERE actor\_id = 1}
+    \item \textbf{Concurrency:} 10 parallel workers using ThreadPoolExecutor
+\end{itemize}
+
+\subsection{Benchmark Results}
+
+\begin{table}[H]
+\centering
+\caption{Benchmark Results: 1000 Reads + 1000 Writes per Strategy}
+\label{tab:benchmark}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Strategy} & \textbf{Read Success} & \textbf{Write Success} & \textbf{Read Throughput} & \textbf{Write Throughput} \\
+\midrule
+Direct Hit & 1000/1000 & 1000/1000 & 114.98 req/s & 112.87 req/s \\
+Random & 1000/1000 & 1000/1000 & 115.97 req/s & 114.26 req/s \\
+Customized & 1000/1000 & 1000/1000 & 109.92 req/s & 113.18 req/s \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Results Analysis}
+
+\textbf{Success Rate:} All 6,000 requests completed successfully with 0 failures, demonstrating the reliability of the implementation.
+
+\textbf{Read Throughput:}
+\begin{itemize}
+    \item \textbf{Direct Hit} (114.98 req/s): Baseline performance with all reads going to Manager
+    \item \textbf{Random} (115.97 req/s): Slightly higher throughput due to load distribution
+    \item \textbf{Customized} (109.92 req/s): Lower throughput certainly due to ping measurement overhead before each request
+\end{itemize}
+
+\textbf{Write Throughput:} Consistent across all strategies (~113 req/s) as writes always go to the Manager regardless of strategy.
+
+\textbf{Observations:}
+\begin{enumerate}
+    \item The Random strategy provides the best read throughput for this workload
+    \item The Customized strategy incurs overhead from latency measurements
+    \item Write performance is independent of routing strategy
+\end{enumerate}
+
+
+\section{Conclusion}
+
+In this projet we implemented a distributed MySQL cluster with Proxy and Gatekeeper cloud design patterns on AWS EC2. The work completed include:
+
+\begin{enumerate}
+    \item \textbf{MySQL Cluster:} Three t2.micro instances with master-slave replication, verified with sysbench benchmarks showing ~384 transactions/second baseline performance.
+
+    \item \textbf{Proxy Pattern:} Implemented three routing strategies (direct hit, random, customized) that correctly separate read and write operations, achieving ~110-116 requests/second throughput.
+
+    \item \textbf{Gatekeeper Pattern:} Implemented authentication via API keys and query validation that blocks dangerous operations, providing a secure entry point to the system.
+
+    \item \textbf{Security:} The Proxy (Trusted Host) is protected from direct internet access, with all external traffic routed through the Gatekeeper.
+
+    \item \textbf{Automation:} Complete Infrastructure as Code implementation using boto3, enabling reproducible deployments.
+
+    \item \textbf{Reliability:} 100\% success rate across 6,000 benchmark requests validates the correctness of the implementation.
+\end{enumerate}
+
+\end{document}

@@ -1,0 +1,70 @@
+\relax 
+\providecommand\hyper@newdestlabel[2]{}
+\providecommand\HyField@AuxAddToFields[1]{}
+\providecommand\HyField@AuxAddToCoFields[2]{}
+\@writefile{toc}{\contentsline {section}{\numberline {1}Introduction}{1}{section.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {2}System Architecture}{1}{section.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.1}Architecture Overview}{1}{subsection.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces System Architecture: Request flow from user through Gatekeeper and Proxy to MySQL Cluster}}{2}{figure.caption.1}\protected@file@percent }
+\providecommand*\caption@xref[2]{\@setref\relax\@undefined{#1}}
+\newlabel{fig:architecture}{{1}{2}{System Architecture: Request flow from user through Gatekeeper and Proxy to MySQL Cluster}{figure.caption.1}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Components}{2}{subsection.2.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces EC2 Instances}}{2}{table.caption.2}\protected@file@percent }
+\newlabel{tab:instances}{{1}{2}{EC2 Instances}{table.caption.2}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}MySQL Standalone Setup and Sysbench Benchmarking}{2}{section.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.1}MySQL Installation}{2}{subsection.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.2}Sysbench Benchmarking}{3}{subsection.3.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Sysbench Commands}}{3}{figure.caption.3}\protected@file@percent }
+\newlabel{fig:sysbench}{{2}{3}{Sysbench Commands}{figure.caption.3}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {3.3}Sysbench Results}{3}{subsection.3.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Sysbench Results (Manager instance)}}{3}{figure.caption.4}\protected@file@percent }
+\newlabel{fig:sysbench-results}{{3}{3}{Sysbench Results (Manager instance)}{figure.caption.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}MySQL Replication Setup}{3}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Replication Architecture}{3}{subsection.4.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Replication Configuration}{4}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Manager (Master) Configuration}}{4}{figure.caption.5}\protected@file@percent }
+\newlabel{fig:replica-master}{{4}{4}{Manager (Master) Configuration}{figure.caption.5}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces Worker (Slave) Configuration}}{4}{figure.caption.6}\protected@file@percent }
+\newlabel{fig:replica-slaves}{{5}{4}{Worker (Slave) Configuration}{figure.caption.6}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Replication Verification}{4}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces Verify Replication Status}}{5}{figure.caption.7}\protected@file@percent }
+\newlabel{fig:verify-replication}{{6}{5}{Verify Replication Status}{figure.caption.7}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Proxy Pattern Implementation}{5}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Pattern Description}{5}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Routing Strategies}{5}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.1}Direct Hit Strategy}{5}{subsubsection.5.2.1}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces Direct Hit Strategy}}{5}{figure.caption.8}\protected@file@percent }
+\newlabel{fig:strategy-direct}{{7}{5}{Direct Hit Strategy}{figure.caption.8}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.2}Random Strategy}{5}{subsubsection.5.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces Random Strategy}}{5}{figure.caption.9}\protected@file@percent }
+\newlabel{fig:strategy-random}{{8}{5}{Random Strategy}{figure.caption.9}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {5.2.3}Customized Strategy}{6}{subsubsection.5.2.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {9}{\ignorespaces Customized (Ping-Based) Strategy}}{6}{figure.caption.10}\protected@file@percent }
+\newlabel{fig:strategy-customized}{{9}{6}{Customized (Ping-Based) Strategy}{figure.caption.10}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Query Classification}{6}{subsection.5.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {10}{\ignorespaces Query Classification Logic}}{6}{figure.caption.11}\protected@file@percent }
+\newlabel{fig:query-classification}{{10}{6}{Query Classification Logic}{figure.caption.11}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Gatekeeper Pattern Implementation}{7}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Pattern Description}{7}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Authentication}{7}{subsection.6.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {11}{\ignorespaces API Key Authentication}}{7}{figure.caption.12}\protected@file@percent }
+\newlabel{fig:api-auth}{{11}{7}{API Key Authentication}{figure.caption.12}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Query Validation}{7}{subsection.6.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {12}{\ignorespaces Query Validation}}{7}{figure.caption.13}\protected@file@percent }
+\newlabel{fig:query-validation}{{12}{7}{Query Validation}{figure.caption.13}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Request Flow}{7}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Security Implementation}{8}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.1}Network Security}{8}{subsection.7.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {2}{\ignorespaces Security Group Rules}}{8}{table.caption.14}\protected@file@percent }
+\newlabel{tab:security}{{2}{8}{Security Group Rules}{table.caption.14}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {7.2}Trusted Host Protection}{8}{subsection.7.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {13}{\ignorespaces Securing the Proxy}}{8}{figure.caption.15}\protected@file@percent }
+\newlabel{fig:securing-proxy}{{13}{8}{Securing the Proxy}{figure.caption.15}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {8}Cluster Benchmarking}{8}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.1}Benchmark Methodology}{8}{subsection.8.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.2}Benchmark Results}{9}{subsection.8.2}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {3}{\ignorespaces Benchmark Results: 1000 Reads + 1000 Writes per Strategy}}{9}{table.caption.16}\protected@file@percent }
+\newlabel{tab:benchmark}{{3}{9}{Benchmark Results: 1000 Reads + 1000 Writes per Strategy}{table.caption.16}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {8.3}Results Analysis}{9}{subsection.8.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Conclusion}{9}{section.9}\protected@file@percent }
+\gdef \@abspage@last{9}
