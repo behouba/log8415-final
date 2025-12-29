@@ -18,7 +18,7 @@ python3 main.py
 python3 setup_replication.py
 
 # Launch proxy instance
-python3 launch_proxy.py
+python3 launch_proxy_instance.py
 
 # Deploy proxy application
 python3 deploy_proxy_code.py
