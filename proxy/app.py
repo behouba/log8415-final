@@ -7,11 +7,11 @@ import time
 app = Flask(__name__)
 
 
-MANAGER_IP = ""
-WORKER_IPS = []
+MANAGER_IP = "172.31.29.231"
+WORKER_IPS = ['172.31.23.158', '172.31.31.198']
 
-DB_USER = "replica_user"
-DB_PASS = "replica_password"
+DB_USER = "sbtest"
+DB_PASS = "sbtest_password"
 DB_NAME = "sakila"
 
 def get_db_connection(ip):
@@ -89,7 +89,7 @@ def proxy_query():
     if is_read:
         if strategy == "random":
             target_ip = strategy_random()
-            node_role = "Worder (Random)"
+            node_role = "Worker (Random)"
         elif strategy == "customized":
             target_ip = strategy_customized()
             node_role = "Worker (Ping Optimized)"

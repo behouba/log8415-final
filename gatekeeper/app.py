@@ -4,11 +4,11 @@ import re
 
 app = Flask(__name__)
 
-PROXY_HOST = "172.31.25.160"
+PROXY_HOST = "172.31.37.224"
 PROXY_PORT = 5000
 
 # API key for authentication (injected during deployment)
-API_KEY = "PLACEHOLDER_API_KEY"
+API_KEY = "10820d8b3d3cd2d4baf7263af34cdbc1a727e39f0bc86365"
 
 BLOCKED_PATTERNS = [
     r'\bDROP\s+TABLE\b',
